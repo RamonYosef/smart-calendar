@@ -1,0 +1,36 @@
+<section class="calendar-container container-fluid">
+    <div class="calendar-box row">
+        <div class="calendar-date col-12 col-xxl-5 col-md-5">
+            <p>{{dataAtual | date : 'MMMM-yyyy'}}</p>
+            <h1>{{dataAtual | date : 'dd'}}</h1>
+        </div>
+        <div class="calendar-details col-12 col-xxl-7 col-md-7 ">
+            <div class="calendar-title-btn">
+
+                <button class="calendar-btn" (click)="alterarMes(-1)">
+                    <ng-icon name="ionChevronBack" />
+                </button>
+
+                <button class="calendar-btn" (click)="alterarMes(+1)">
+                    <ng-icon name="ionChevronForward" />
+                </button>
+            </div>
+
+            <div class="calendar-week-days">
+                <ng-container *ngFor="let dia of diasCalendario; let i = index">
+                    <div class="calendar-week" *ngIf="i < 7">
+                        <p>
+                            {{ dia | date: 'EEE'}}
+                        </p>
+                    </div>
+                </ng-container>
+                <div class="calendar-days" *ngFor="let dia of diasCalendario; let i = index"
+                    [class.calendar-moth-late]="dataAtual.getMonth() !== dia.getMonth()">
+                    <p>
+                        {{dia | date: 'dd' }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
