@@ -1,0 +1,59 @@
+button {
+    &.primary {
+        background-color: transparent;
+        padding: 4px;
+        border-radius: 5px;
+        border: 2px solid var(--white);
+        text-transform: uppercase;
+
+        font-size: 12px;
+        color: var(--white);
+        font-weight: 500;
+
+        &:hover {
+            background-color: var(--white);
+            color: var(--black);
+            transition: all 0.2s ease-in;
+        }
+
+    }
+
+    // celulares menores
+    @media (max-width: 767.98px) and (min-width: 400px) {}
+
+    // celulares e alguns tables
+    @media (min-width: 768px) and (max-width: 991.98px) {
+        &.primary {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+    }
+
+    // tables
+    @media (min-width: 992px) and (max-width: 1199.98px) {
+        &.primary {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+    }
+
+    // notebooks
+    @media (min-width: 1200px) and (max-width: 1399.98px) {
+        &.primary {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+    }
+
+    // desktop
+    @media (min-width: 1400px) and (max-width: 1919.98px) {
+        &.primary {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+    }
+
+    // desktop
+    @media (min-width: 1920px) {}
+
+}

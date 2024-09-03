@@ -8,6 +8,7 @@
 :root{
   //color
   --deep-aqua:#0190A0;
+  --hot-pink: #FC4C63;
   --light-gray: #F5F5F7;
   --dark-gray: #6E6E73;
   --white: #FFFFFF;
@@ -26,5 +27,6 @@ body{
     button{
       border: none;
       cursor: pointer;
+      outline: none;
     }
 }

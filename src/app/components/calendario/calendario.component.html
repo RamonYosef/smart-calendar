@@ -1,8 +1,13 @@
 <section class="calendar-container container-fluid">
     <div class="calendar-box row">
         <div class="calendar-date col-12 col-xxl-5 col-md-5">
+            <div class="calendar-btn-today w-100">
+                <div class="wrapper-btn-today">
+                    <app-buttons btnClass="primary" btnTitle="Today" (click)="today()" />
+                </div>
+            </div>
             <p>{{dataAtual | date : 'MMMM-yyyy'}}</p>
-            <h1>{{dataAtual | date : 'dd'}}</h1>
+            <h1>{{clickData | date : 'dd'}}</h1>
         </div>
         <div class="calendar-details col-12 col-xxl-7 col-md-7 ">
             <div class="calendar-title-btn">
@@ -25,7 +30,10 @@
                     </div>
                 </ng-container>
                 <div class="calendar-days" *ngFor="let dia of diasCalendario; let i = index"
-                    [class.calendar-moth-late]="dataAtual.getMonth() !== dia.getMonth()">
+                    (click)="clickDay(dia.getDate(), dia.getMonth())"
+                    [class.calendar-moth-late]="dataAtual.getMonth() !== dia.getMonth()"
+                    [class.calendar-day-actual]="diaAtual.getDate() === dia.getDate() && diaAtual.getMonth() === dia.getMonth()"
+                    [class.calendar-day-click]="clickData.getDate() === dia.getDate() && clickData.getMonth() === dia.getMonth() && clickData.getDate() !== diaAtual.getDate()">
                     <p>
                         {{dia | date: 'dd' }}
                     </p>
