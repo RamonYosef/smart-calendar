@@ -3,6 +3,8 @@ import { Component } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { ionChevronBack, ionChevronForward } from '@ng-icons/ionicons'
 import { ButtonsComponent } from "../../shared/buttons/buttons.component";
+import { ApiServiceService } from '../../service/api.service.service';
+import { filter } from 'rxjs';
 @Component({
   selector: 'app-calendario',
   standalone: true,
@@ -12,14 +14,47 @@ import { ButtonsComponent } from "../../shared/buttons/buttons.component";
   styleUrl: './calendario.component.scss'
 })
 export class CalendarioComponent {
+  dataFeriados: any;
+
   dataAtual = new Date();
   diaAtual = new Date();
   clickData = new Date();
-  diasCalendario: Date[] = [];
+  feriado: any;
+  diaFeriado = new Date();
+  name: string = ""
+
+  diasCalendario: any[] = [];
+
+
 
 
   ngOnInit(): void {
-    this.construirCalendario()
+    this.ApiDataFeriados()
+    // this.construirCalendario
+  }
+  constructor(private apiService: ApiServiceService) { }
+
+  ApiDataFeriados(): void {
+    this.apiService.getDataFeriados().subscribe({
+      next: (data): void => {
+        this.dataFeriados = data
+
+        this.dataFeriados.map((index: any) => {
+          const teste = new Date(index.date);
+          return index.date = teste
+        })
+     
+        this.clickDay
+        this.construirCalendario()
+        
+
+      }, error: (response): void => {
+
+        console.log(response)
+
+      }
+    })
+
   }
 
   construirCalendario(): void {
@@ -51,41 +86,64 @@ export class CalendarioComponent {
       this.diasCalendario.push(new Date(data.getTime()));
     }
 
+    this.diasCalendario = this.diasCalendario.map(index => {
+      const sla = this.dataFeriados.find((item: any) => index.getDate() === item.date.getDate() + 1 && index.getMonth() === item.date.getMonth())
+
+        return {
+           date: index,
+           feriado: sla ? sla.name : '' 
+        }
+    })
+
+
+   
+
   }
 
   alterarMes(offsetMes: number) {
     this.dataAtual.setMonth(this.dataAtual.getMonth() + offsetMes);
-    this.clickData = new Date(this.dataAtual.getFullYear(), this.dataAtual.getMonth(), )
+
+    this.clickData = new Date(this.dataAtual.getFullYear(), this.dataAtual.getMonth(),)
     this.clickData.setDate(this.dataAtual.getMonth() === this.diaAtual.getMonth() ? this.diaAtual.getDate() : 1)
 
 
     this.dataAtual = new Date(this.dataAtual.getTime());
     this.clickData = new Date(this.clickData.getTime());
     this.construirCalendario();
+    this.name = ""
   }
 
   clickDay(day: number, mes: number) {
     this.clickData.setDate(mes === this.dataAtual.getMonth() ? day : 1)
     this.clickData = new Date(this.clickData.getTime())
-    console.log(mes)
 
+    this.feriado = this.dataFeriados.find((index: any) => index.date.getDate() + 1 === this.clickData.getDate() && index.date.getMonth() === mes)
+
+    this.name = this.feriado ? this.feriado.name : ""
   }
 
-
-  today(){
+  today() {
     this.clickData = this.diaAtual
     this.clickData = new Date(this.clickData.getTime())
-
-
+    
+    
+    
+    
     this.dataAtual.setMonth(this.diaAtual.getMonth())
     this.dataAtual = new Date(this.dataAtual.getTime())
     this.construirCalendario();
     console.log(this.dataAtual.getDate())
-
+    
+    this.name = ""
   }
+
+  
 
 
   
+
+
+
 
 
 }
