@@ -1,26 +1,26 @@
-import { DatePipe, NgFor, NgIf } from '@angular/common';
+import { DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { ionChevronBack, ionChevronForward } from '@ng-icons/ionicons'
 import { ButtonsComponent } from "../../shared/buttons/buttons.component";
 import { ApiServiceService } from '../../service/api.service.service';
-import { filter } from 'rxjs';
+
 @Component({
   selector: 'app-calendario',
   standalone: true,
-  imports: [NgFor, NgIf, DatePipe, NgIconComponent, ButtonsComponent],
+  imports: [NgFor, NgIf, DatePipe, NgIconComponent, ButtonsComponent, NgClass],
   viewProviders: [provideIcons({ ionChevronBack, ionChevronForward })],
   templateUrl: './calendario.component.html',
   styleUrl: './calendario.component.scss'
 })
 export class CalendarioComponent {
-  dataFeriados: any;
 
   dataAtual = new Date();
   diaAtual = new Date();
   clickData = new Date();
-  feriado: any;
   diaFeriado = new Date();
+  dataFeriados: any;
+  feriado: any;
   name: string = ""
 
   diasCalendario: any[] = [];
@@ -43,10 +43,10 @@ export class CalendarioComponent {
           const teste = new Date(index.date);
           return index.date = teste
         })
-     
+
         this.clickDay
         this.construirCalendario()
-        
+
 
       }, error: (response): void => {
 
@@ -89,14 +89,14 @@ export class CalendarioComponent {
     this.diasCalendario = this.diasCalendario.map(index => {
       const sla = this.dataFeriados.find((item: any) => index.getDate() === item.date.getDate() + 1 && index.getMonth() === item.date.getMonth())
 
-        return {
-           date: index,
-           feriado: sla ? sla.name : '' 
-        }
+      return {
+        date: index,
+        feriado: sla ? sla.name : ''
+      }
     })
 
 
-   
+
 
   }
 
@@ -123,24 +123,37 @@ export class CalendarioComponent {
   }
 
   today() {
-    this.clickData = this.diaAtual
+    this.clickData = new Date(this.diaAtual)
     this.clickData = new Date(this.clickData.getTime())
-    
-    
-    
-    
+
+
+
+
     this.dataAtual.setMonth(this.diaAtual.getMonth())
+    this.dataAtual.setFullYear(this.diaAtual.getFullYear())
     this.dataAtual = new Date(this.dataAtual.getTime())
     this.construirCalendario();
     console.log(this.dataAtual.getDate())
-    
+
     this.name = ""
   }
 
-  
+
+  getDayClasses(dia: any): {[key:string]: boolean}{
+    return{
+      'calendar__moth-late': this.dataAtual.getMonth() !== dia.date.getMonth(),
+      'calendar__day-actual': this.diaAtual.getDate() === dia.date.getDate() && this.diaAtual.getMonth() === dia.date.getMonth(),
+      'calendar__day-holiday': dia.feriado && this.dataAtual.getMonth() === dia.date.getMonth(),
+      'calendar__day-click ': this.clickData.getDate() === dia.date.getDate() &&
+                                   this.clickData.getMonth() === dia.date.getMonth() && 
+                                   this.clickData.getDate() !== this.diaAtual.getDate()
+    }
+  }
 
 
-  
+
+
+
 
 
 

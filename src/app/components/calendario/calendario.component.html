@@ -1,44 +1,59 @@
-<section class="calendar-container container-fluid">
-    <div class="calendar-box row">
-        <div class="calendar-date col-12 col-xxl-5 col-md-5">
-            <div class="calendar-btn-today w-100">
-                <div class="wrapper-btn-today">
-                    <app-buttons btnClass="primary" btnTitle="Today" (click)="today()" />
-                </div>
-            </div>
-            <p>{{dataAtual | date : 'MMMM-yyyy'}}</p>
-            <h1>{{clickData | date : 'dd'}}</h1>
-            <p>{{name}}</p>
-        </div>
-        <div class="calendar-details col-12 col-xxl-7 col-md-7 ">
-            <div class="calendar-title-btn">
+<section class="calendar__container">
+    <div class="calendar__box">
+        <div class="calendar__main row">
+            <div class="calendar__date col-12 col-xxl-5 col-md-5">
 
-                <button class="calendar-btn" (click)="alterarMes(-1)">
-                    <ng-icon name="ionChevronBack" />
-                </button>
-
-                <button class="calendar-btn" (click)="alterarMes(+1)">
-                    <ng-icon name="ionChevronForward" />
-                </button>
-            </div>
-
-            <div class="calendar-week-days">
-                <ng-container *ngFor="let dia of diasCalendario; let i = index">
-                    <div class="calendar-week" *ngIf="i < 7">
-                        <p>
-                            {{ dia.date | date: 'EEE'}}
-                        </p>
+                <!-- Botão "Today" -->
+                <div class="calendar__btn-today-wrapper w-100">
+                    <div class="calendar__btn-today-content">
+                        <app-buttons btnClass="primary" btnTitle="Today" (click)="today()" />
                     </div>
-                </ng-container>
-                <div class="calendar-days" *ngFor="let dia of diasCalendario; let i = index"
-                    (click)="clickDay(dia.date.getDate(), dia.date.getMonth())"
-                    [class.calendar-moth-late]="dataAtual.getMonth() !== dia.date.getMonth()"
-                    [class.calendar-day-actual]="diaAtual.getDate() === dia.date.getDate() && diaAtual.getMonth() === dia.date.getMonth()"
-                    [class.calendar-day-holiday]="dia.feriado && dataAtual.getMonth() === dia.date.getMonth()"
-                    [class.calendar-day-click]="clickData.getDate() === dia.date.getDate() && clickData.getMonth() === dia.date.getMonth() && clickData.getDate() !== diaAtual.getDate()">
-                    <p>
-                        {{dia.date | date: 'dd' }}
-                    </p>
+                </div>
+
+                <!-- Exibição de Data -->
+                <div class="calendar__date-display w-100">
+                    <p class="calendar__current-month">{{dataAtual | date : 'MMMM-yyyy'}}</p>
+                    <h1 class="calendar__select-day">{{clickData | date : 'dd'}}</h1>
+                    <p class="calendar__name-holiday">{{name}}</p>
+                </div>
+
+            </div>
+
+            <div class="calendar__details col-12 col-xxl-7 col-md-7 ">
+
+                <!-- Botões de Navegação  -->
+                <div class="calendar__month-switcher">
+
+                    <button class="calendar__btn-prev" (click)="alterarMes(-1)">
+                        <ng-icon name="ionChevronBack" />
+                    </button>
+
+                    <button class="calendar__btn-next" (click)="alterarMes(+1)">
+                        <ng-icon name="ionChevronForward" />
+                    </button>
+
+                </div>
+
+
+                <!-- Dias e Semanas -->
+                <div class="calendar__week-days">
+
+                    <!-- Dias da Semana -->
+                    <ng-container *ngFor="let dia of diasCalendario; let i = index">
+                        <div class="calendar__week" *ngIf="i < 7">
+                            <p>
+                                {{ dia.date | date: 'EEE'}}
+                            </p>
+                        </div>
+                    </ng-container>
+
+                    <!-- Dias do Mês -->
+                    <div class="calendar__days" *ngFor="let dia of diasCalendario; let i = index"
+                        (click)="clickDay(dia.date.getDate(), dia.date.getMonth())" [ngClass]='getDayClasses(dia)'>
+
+                        <p>{{dia.date | date: 'dd' }}</p>
+                    </div>
+
                 </div>
             </div>
         </div>
