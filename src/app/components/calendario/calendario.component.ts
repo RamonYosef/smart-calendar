@@ -97,6 +97,14 @@ export class CalendarioComponent {
         holiday: holidays ? holidays.name : ''
       }
     })
+
+    this.holiday = this.calendarHolidays.find((index: any) => 
+    index.date.getDate() + 1 === this.selectedDate.getDate() 
+    && index.date.getMonth() === this.selectedDate.getMonth())
+
+    this.selectedHolidayName = this.holiday ? this.holiday.name : ""
+
+    
   }
 
   // Trocando o Mes
@@ -117,7 +125,9 @@ export class CalendarioComponent {
     this.selectedDate.setDate(mes === this.currentDate.getMonth() ? day : 1)
     this.selectedDate = new Date(this.selectedDate.getTime())
 
-    this.holiday = this.calendarHolidays.find((index: any) => index.date.getDate() + 1 === this.selectedDate.getDate() && index.date.getMonth() === mes)
+    this.holiday = this.calendarHolidays.find((index: any) => 
+    index.date.getDate() + 1 === this.selectedDate.getDate() && 
+    index.date.getMonth() === mes)
 
     this.selectedHolidayName = this.holiday ? this.holiday.name : ""
   }
@@ -134,6 +144,12 @@ export class CalendarioComponent {
     this.currentDate = new Date(this.currentDate.getTime())
     this.buildCalendar();
     console.log(this.currentDate.getDate())
+
+    this.holiday = this.calendarHolidays.find((index: any) => 
+    index.date.getDate() + 1 === this.selectedDate.getDate() 
+    && index.date.getMonth() === this.selectedDate.getMonth())
+
+    this.selectedHolidayName = this.holiday ? this.holiday.name : ""
   }
 
 
