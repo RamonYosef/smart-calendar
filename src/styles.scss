@@ -6,24 +6,23 @@
 }
 
 :root {
-
-  // Modo-Dark
-
-  // --day-click:#ff8906;
-  // --today: #f25f4c;
-  // --background: #0f0e17;
-  // --main: #fffffe;
-  // --fonts: #000;
-  // --holiday: #e53170;
-
   // Modo-Light
-
   --day-click: #3da9fc;
   --today: #9656a1;
   --background: #eff0f3;
   --main: #fffffe;
   --fonts: #2a2a2a;
   --holiday: #d9376e;
+}
+
+:root .dark-theme{
+  // Modo-Dark
+  --day-click:#ff8906;
+  --today: #f25f4c;
+  --background: #0f0e17;
+  --main: #fffffe;
+  --fonts: #000;
+  --holiday: #e53170;
 }
 
 body {

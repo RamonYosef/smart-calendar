@@ -4,17 +4,26 @@
             <div class="calendar__date col-12 col-xxl-5 col-md-5">
 
                 <!-- Botão "Today" -->
-                <div class="calendar__btn-today-wrapper w-100">
+                <div class="calendar__btn-group-wrapper w-100">
+                    
+                    <!-- Botão de troca de tema -->
+                    <div class="calendar__btn-theme-content">
+                        <button class="calendar__btn-theme">
+                            <ng-icon [name]="toggleIcon" (click)="SwitchTheme()" class="calendar__icon-theme"/>
+                        </button>
+                    </div>
+
+                    <!-- Botão para voltar a data atual -->
                     <div class="calendar__btn-today-content">
-                        <app-buttons btnClass="primary" btnTitle="Today" (click)="today()" />
+                        <app-buttons btnClass="primary" btnTitle="Today" (click)="backToday()" />
                     </div>
                 </div>
 
                 <!-- Exibição de Data -->
                 <div class="calendar__date-display w-100">
-                    <p class="calendar__current-month">{{dataAtual | date : 'MMMM-yyyy'}}</p>
-                    <h1 class="calendar__select-day">{{clickData | date : 'dd'}}</h1>
-                    <p class="calendar__name-holiday">{{name}}</p>
+                    <p class="calendar__current-month">{{currentDate | date : 'MMMM-yyyy'}}</p>
+                    <h1 class="calendar__select-day">{{selectedDate | date : 'dd'}}</h1>
+                    <p class="calendar__name-holiday">{{selectedHolidayName}}</p>
                 </div>
 
             </div>
@@ -24,11 +33,11 @@
                 <!-- Botões de Navegação  -->
                 <div class="calendar__month-switcher">
 
-                    <button class="calendar__btn-prev" (click)="alterarMes(-1)">
+                    <button class="calendar__btn-prev" (click)="switchMonth(-1)">
                         <ng-icon name="ionChevronBack" />
                     </button>
 
-                    <button class="calendar__btn-next" (click)="alterarMes(+1)">
+                    <button class="calendar__btn-next" (click)="switchMonth(+1)">
                         <ng-icon name="ionChevronForward" />
                     </button>
 
@@ -39,7 +48,7 @@
                 <div class="calendar__week-days">
 
                     <!-- Dias da Semana -->
-                    <ng-container *ngFor="let dia of diasCalendario; let i = index">
+                    <ng-container *ngFor="let dia of calendarDays; let i = index">
                         <div class="calendar__week" *ngIf="i < 7">
                             <p>
                                 {{ dia.date | date: 'EEE'}}
@@ -48,7 +57,7 @@
                     </ng-container>
 
                     <!-- Dias do Mês -->
-                    <div class="calendar__days" *ngFor="let dia of diasCalendario; let i = index"
+                    <div class="calendar__days" *ngFor="let dia of calendarDays; let i = index"
                         (click)="clickDay(dia.date.getDate(), dia.date.getMonth())" [ngClass]='getDayClasses(dia)'>
 
                         <p>{{dia.date | date: 'dd' }}</p>

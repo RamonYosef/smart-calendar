@@ -1,7 +1,8 @@
 import { DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { NgIconComponent, provideIcons } from '@ng-icons/core';
 import { ionChevronBack, ionChevronForward } from '@ng-icons/ionicons'
+import { bootstrapMoonStarsFill, bootstrapSunFill } from '@ng-icons/bootstrap-icons'
 import { ButtonsComponent } from "../../shared/buttons/buttons.component";
 import { ApiServiceService } from '../../service/api.service.service';
 
@@ -9,154 +10,146 @@ import { ApiServiceService } from '../../service/api.service.service';
   selector: 'app-calendario',
   standalone: true,
   imports: [NgFor, NgIf, DatePipe, NgIconComponent, ButtonsComponent, NgClass],
-  viewProviders: [provideIcons({ ionChevronBack, ionChevronForward })],
+  viewProviders: [provideIcons({ ionChevronBack, ionChevronForward, bootstrapMoonStarsFill, bootstrapSunFill })],
   templateUrl: './calendario.component.html',
   styleUrl: './calendario.component.scss'
 })
 export class CalendarioComponent {
 
-  dataAtual = new Date();
-  diaAtual = new Date();
-  clickData = new Date();
-  diaFeriado = new Date();
-  dataFeriados: any;
-  feriado: any;
-  name: string = ""
+  @Input() toggleIcon: string = 'bootstrapSunFill'
 
-  diasCalendario: any[] = [];
+  currentDate = new Date();
+  today = new Date();
+  selectedDate = new Date();
+  calendarHolidays: any;
+  holiday: any;
+  selectedHolidayName: string = ""
+
+  calendarDays: any[] = [];
 
 
 
-
-  ngOnInit(): void {
-    this.ApiDataFeriados()
-    // this.construirCalendario
-  }
   constructor(private apiService: ApiServiceService) { }
 
-  ApiDataFeriados(): void {
-    this.apiService.getDataFeriados().subscribe({
-      next: (data): void => {
-        this.dataFeriados = data
+  ngOnInit(): void {
+    this.apiHolidayData()
+  }
 
-        this.dataFeriados.map((index: any) => {
-          const teste = new Date(index.date);
-          return index.date = teste
+  apiHolidayData(): void {
+
+    this.apiService.getDataFeriados().subscribe({
+      next: (data) => {
+        this.calendarHolidays = data
+        
+        this.calendarHolidays.map((index: any) => {
+          return index.date = new Date(index.date)
         })
 
+        this.buildCalendar()
         this.clickDay
-        this.construirCalendario()
 
 
       }, error: (response): void => {
-
         console.log(response)
-
       }
     })
-
   }
 
-  construirCalendario(): void {
-    const ano = this.dataAtual.getFullYear();
-    const mes = this.dataAtual.getMonth();
+  buildCalendar(): void {
+    const year = this.currentDate.getFullYear();
+    const month = this.currentDate.getMonth();
 
-
-    const primeiroDiaDaSemana = 0;
-    const UltimoDiaDaSemana = 6;
+    // primeiro dia da semana
+    const firstDayOfTheWeek = 0;
+    
+    // ultimo dia da semana
+    const lastDayOfTheWeek = 6;
 
     // vai subtraindo -1 ate o primeiro dia da semana
-    const dataInicial = new Date(ano, mes, 1);
-    while (dataInicial.getDay() !== primeiroDiaDaSemana) {
+    const dataInicial = new Date(year, month, 1);
+    while (dataInicial.getDay() !== firstDayOfTheWeek) {
       dataInicial.setDate(dataInicial.getDate() - 1)
     }
 
     // vai somando + 1 ate o Ultimo dia da semana
-    const dataFinal = new Date(ano, mes + 1, 0);
-    while (dataFinal.getDay() !== UltimoDiaDaSemana) {
+    const dataFinal = new Date(year, month + 1, 0);
+    while (dataFinal.getDay() !== lastDayOfTheWeek) {
       dataFinal.setDate(dataFinal.getDate() + 1)
     }
 
-    this.diasCalendario = []
+    this.calendarDays = []
     for (
       let data = new Date(dataInicial.getTime());
       data <= dataFinal;
       data.setDate(data.getDate() + 1)
     ) {
-      this.diasCalendario.push(new Date(data.getTime()));
+      this.calendarDays.push(new Date(data.getTime()));
     }
 
-    this.diasCalendario = this.diasCalendario.map(index => {
-      const sla = this.dataFeriados.find((item: any) => index.getDate() === item.date.getDate() + 1 && index.getMonth() === item.date.getMonth())
+    this.calendarDays = this.calendarDays.map(index => {
+      const holidays = this.calendarHolidays.find((item: any) => 
+        index.getDate() === item.date.getDate() + 1 && 
+        index.getMonth() === item.date.getMonth()
+      )
 
       return {
         date: index,
-        feriado: sla ? sla.name : ''
+        holiday: holidays ? holidays.name : ''
       }
     })
-
-
-
-
   }
 
-  alterarMes(offsetMes: number) {
-    this.dataAtual.setMonth(this.dataAtual.getMonth() + offsetMes);
+  // Trocando o Mes
+  switchMonth(offsetMes: number) {
+    this.currentDate.setMonth(this.currentDate.getMonth() + offsetMes);
+    
+    this.selectedDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(),)
+    this.selectedDate.setDate(this.currentDate.getMonth() === this.today.getMonth() ? this.today.getDate() : 1)
 
-    this.clickData = new Date(this.dataAtual.getFullYear(), this.dataAtual.getMonth(),)
-    this.clickData.setDate(this.dataAtual.getMonth() === this.diaAtual.getMonth() ? this.diaAtual.getDate() : 1)
 
-
-    this.dataAtual = new Date(this.dataAtual.getTime());
-    this.clickData = new Date(this.clickData.getTime());
-    this.construirCalendario();
-    this.name = ""
+    this.currentDate = new Date(this.currentDate.getTime());
+    this.selectedDate = new Date(this.selectedDate.getTime());
+    this.buildCalendar();
+    this.selectedHolidayName = ""
   }
 
   clickDay(day: number, mes: number) {
-    this.clickData.setDate(mes === this.dataAtual.getMonth() ? day : 1)
-    this.clickData = new Date(this.clickData.getTime())
+    this.selectedDate.setDate(mes === this.currentDate.getMonth() ? day : 1)
+    this.selectedDate = new Date(this.selectedDate.getTime())
 
-    this.feriado = this.dataFeriados.find((index: any) => index.date.getDate() + 1 === this.clickData.getDate() && index.date.getMonth() === mes)
+    this.holiday = this.calendarHolidays.find((index: any) => index.date.getDate() + 1 === this.selectedDate.getDate() && index.date.getMonth() === mes)
 
-    this.name = this.feriado ? this.feriado.name : ""
+    this.selectedHolidayName = this.holiday ? this.holiday.name : ""
   }
 
-  today() {
-    this.clickData = new Date(this.diaAtual)
-    this.clickData = new Date(this.clickData.getTime())
+  backToday() {
+    this.selectedDate = new Date(this.today)
+    this.selectedDate = new Date(this.selectedDate.getTime())
 
 
 
 
-    this.dataAtual.setMonth(this.diaAtual.getMonth())
-    this.dataAtual.setFullYear(this.diaAtual.getFullYear())
-    this.dataAtual = new Date(this.dataAtual.getTime())
-    this.construirCalendario();
-    console.log(this.dataAtual.getDate())
-
-    this.name = ""
+    this.currentDate.setMonth(this.today.getMonth())
+    this.currentDate.setFullYear(this.today.getFullYear())
+    this.currentDate = new Date(this.currentDate.getTime())
+    this.buildCalendar();
+    console.log(this.currentDate.getDate())
   }
 
 
-  getDayClasses(dia: any): {[key:string]: boolean}{
-    return{
-      'calendar__moth-late': this.dataAtual.getMonth() !== dia.date.getMonth(),
-      'calendar__day-actual': this.diaAtual.getDate() === dia.date.getDate() && this.diaAtual.getMonth() === dia.date.getMonth(),
-      'calendar__day-holiday': dia.feriado && this.dataAtual.getMonth() === dia.date.getMonth(),
-      'calendar__day-click ': this.clickData.getDate() === dia.date.getDate() &&
-                                   this.clickData.getMonth() === dia.date.getMonth() && 
-                                   this.clickData.getDate() !== this.diaAtual.getDate()
+  getDayClasses(dia: any): { [key: string]: boolean } {
+    return {
+      'calendar__moth-late': this.currentDate.getMonth() !== dia.date.getMonth(),
+      'calendar__day-actual': this.today.getDate() === dia.date.getDate() && this.today.getMonth() === dia.date.getMonth(),
+      'calendar__day-holiday': dia.holiday && this.currentDate.getMonth() === dia.date.getMonth(),
+      'calendar__day-click ': this.selectedDate.getDate() === dia.date.getDate() &&
+        this.selectedDate.getMonth() === dia.date.getMonth() &&
+        this.selectedDate.getDate() !== this.today.getDate()
     }
   }
 
-
-
-
-
-
-
-
-
-
+  SwitchTheme() {
+    const theme = document.body.classList.toggle('dark-theme') 
+    this.toggleIcon = !theme ? 'bootstrapSunFill' : 'bootstrapMoonStarsFill'
+  }
 }

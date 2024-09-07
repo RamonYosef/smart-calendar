@@ -5,6 +5,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 8px;
 
     .calendar__box {
         max-width: 510px;
@@ -70,13 +71,31 @@
                 }
 
 
-                .calendar__btn-today-wrapper {
+                .calendar__btn-group-wrapper {
                     display: flex;
-                    justify-content: end;
-                    align-items: end;
+                    justify-content: space-between;
+                    align-items: center;
                     margin-bottom: 16px;
 
-                    .calendar__btn-today- {
+                    .calendar__btn-theme-content {
+                        .calendar__btn-theme {
+                            width: 100%;
+                            background-color: transparent;
+                            cursor: pointer;
+
+
+                            .calendar__icon-theme {
+                                display: flex;
+                                justify-content: start;
+                                align-items: start;
+
+                                font-size: 24px;
+                                color: var(--main);
+                            }
+                        }
+                    }
+
+                    .calendar__btn-today-content {
                         max-width: 80px;
                         width: 100%;
                     }
